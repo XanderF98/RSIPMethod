@@ -1,0 +1,59 @@
+def calculate_localized_glycemic_impact(food_item, portion_grams, prep_method, pairings):
+    """
+    Calculates the adjusted Glycemic Load (GL) based on local preparation methods.
+    Formula: (Adjusted GI * Carbohydrate content per portion) / 100
+    """
+    
+    # Database of indigenous staples (Base GI and Carbs per 100g)
+    # Values are approximate based on FAO/WHO regional data
+    staples_db = {
+        "cassava": {"gi": 94, "carbs_per_100g": 38},
+        "white_maize": {"gi": 70, "carbs_per_100g": 21},
+        "yam": {"gi": 65, "carbs_per_100g": 28},
+        "plantain_green": {"gi": 40, "carbs_per_100g": 32},
+        "millet": {"gi": 71, "carbs_per_100g": 23}
+    }
+
+    if food_item not in staples_db:
+        return "Food item not in local database."
+
+    base_gi = staples_db[food_item]["gi"]
+    carbs = (staples_db[food_item]["carbs_per_100g"] * portion_grams) / 100
+
+    # Preparation Modifiers
+    # Pounding increases surface area (higher GI), cooling creates resistant starch (lower GI)
+    prep_modifiers = {
+        "pounded": 1.15,      # Increases GI by 15%
+        "boiled_hot": 1.0,    # Baseline
+        "boiled_and_cooled": 0.80, # Decreases GI by 20% (Resistant Starch)
+        "fermented": 0.85     # Organic acids lower glycemic response
+    }
+
+    # Pairing Modifiers
+    # Adding fiber (leafy greens) or acid (lemon/vinegar) blunts the glucose spike
+    pairing_modifiers = {
+        "with_leafy_greens": 0.85,
+        "with_beans": 0.80,
+        "plain": 1.0
+    }
+
+    # Calculate Adjusted GI
+    gi_multiplier = prep_modifiers.get(prep_method, 1.0)
+    pairing_multiplier = 1.0
+    for p in pairings:
+        pairing_multiplier *= pairing_modifiers.get(p, 1.0)
+
+    adjusted_gi = base_gi * gi_multiplier * pairing_multiplier
+    final_gl = (adjusted_gi * carbs) / 100
+
+    return {
+        "food": food_item,
+        "adjusted_gi": round(adjusted_gi, 1),
+        "final_glycemic_load": round(final_gl, 1),
+        "safety_zone": "High" if final_gl > 20 else "Medium" if final_gl > 10 else "Low"
+    }
+
+# Example Usage:
+# A user eating 200g of Cassava that has been fermented and paired with greens
+result = calculate_localized_glycemic_impact("cassava", 200, "fermented", ["with_leafy_greens"])
+print(result)
