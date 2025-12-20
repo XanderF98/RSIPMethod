@@ -1,0 +1,102 @@
+Using Streamlit is the smartest move for this project. Since your core logic is in Python, Streamlit allows you to build a professional, interactive web app in just a few dozen lines of code—no HTML/CSS required.
+https://share.streamlit.io/new
+Here is a step-by-step roadmap to building your RSIP Nutrition Dashboard in Streamlit.
+
+1. The App Architecture
+In Streamlit, the app runs from top to bottom. You should structure it to feel like a Clinical Tool:
+
+The Sidebar: Patient configuration (Literacy level, Socio-economic status).
+
+The Main Panel: The "Meal Optimizer" where users select a staple and preparation method.
+
+The Results: Dynamic charts showing the Glycemic Load and the Visual Prescription (The DALL-E image).
+
+2. The Core Code Structure
+You can save this as app.py. It integrates the Python logic we discussed earlier with Streamlit’s interactive elements.
+
+Python
+
+import streamlit as st
+import plotly.graph_objects as go
+from logic import calculate_localized_glycemic_impact # Importing the function we wrote
+
+st.set_page_config(page_title="RSIP Nutrition AI", layout="wide")
+
+# --- UI HEADER ---
+st.title("🌍 RSIP Nutrition AI")
+st.markdown("### Contextual Diabetes Management for Underserved Communities")
+
+# --- SIDEBAR: PATIENT CONTEXT ---
+with st.sidebar:
+    st.header("Patient Context")
+    literacy = st.radio("Literacy Level", ["Low (Visual Instructions)", "High (Text & Data)"])
+    income = st.select_slider("Income Level", options=["Subsistence", "Low", "Middle"])
+    st.info("The AI will prioritize seasonal, low-cost pairings based on these settings.")
+
+# --- MAIN: MEAL OPTIMIZER ---
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    st.subheader("Meal Selection")
+    staple = st.selectbox("Select Local Staple", ["cassava", "white_maize", "yam", "millet"])
+    prep = st.radio("Preparation Method", ["boiled_hot", "pounded", "boiled_and_cooled", "fermented"])
+    pairings = st.multiselect("Available Pairings", ["with_leafy_greens", "with_beans"])
+    
+    # Run the logic
+    result = calculate_localized_glycemic_impact(staple, 200, prep, pairings)
+
+with col2:
+    st.subheader("Glycemic Impact Analysis")
+    # Plotly Gauge Chart for Safety Zone
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = result['final_glycemic_load'],
+        title = {'text': f"Safety Zone: {result['safety_zone']}"},
+        gauge = {
+            'axis': {'range': [0, 40]},
+            'bar': {'color': "#123C69"},
+            'steps': [
+                {'range': [0, 10], 'color': "#d4edda"},
+                {'range': [10, 20], 'color': "#fff3cd"},
+                {'range': [20, 40], 'color': "#f8d7da"}],
+        }
+    ))
+    st.plotly_chart(fig, use_container_width=True)
+
+# --- THE VISUAL PRESCRIPTION ---
+st.divider()
+if literacy == "Low (Visual Instructions)":
+    st.subheader("📸 Your Visual Meal Plan")
+    # This is where you'd call the DALL-E API using the prompt function we wrote
+    st.image("https://via.placeholder.com/600x400.png?text=Visual+Plate+Instruction+Generates+Here", 
+             caption="Example: Small portion of starch + large portion of greens.")
+3. How to Deploy (The "Portfolio" Step)
+Streamlit Cloud makes your app live in seconds.
+
+Create a requirements.txt file: Include streamlit, pandas, plotly, and openai.
+
+Push to GitHub: Put your app.py, logic.py, and requirements.txt in a new repository.
+
+Connect to Streamlit Cloud:
+
+Go to share.streamlit.io.
+
+Connect your GitHub repo.
+
+Crucial: Add your OPENAI_API_KEY to the Secrets section in the Streamlit settings so it can generate images securely.
+
+4. Advice for Making it "Portfolio-Ready"
+Add "The Science" Section: Use st.expander("How the RSIP Engine Works") to explain the concept of Resistant Starch. This proves you didn't just build a toy, but a scientifically grounded tool.
+
+Use Sample Data: Since you might not want to pay for a DALL-E generation every time a recruiter clicks your link, you can cache images. Use st.cache_data to show pre-generated images for certain combinations to save on API costs.
+
+Case Study Write-up: At the bottom of the Streamlit app, add a section about your Client (The WHO Consultant) and the specific problem you were solving for him. It turns the app into a "Business Case."
+
+5. Why this is better than GitHub Pages for this project
+Interactivity: Recruiters can move sliders and see charts update instantly.
+
+Python Power: You can't run Python on standard GitHub Pages; you’d have to convert everything to JavaScript. Streamlit lets you keep your specialized nutritional logic in Python.
+
+AI Integration: Streamlit handles API calls (like OpenAI) much more securely and easily than a static HTML page.
+
+Would you like me to refine the "Clinical Explanation" text for the st.expander section so it sounds authoritative for your doctor client?
