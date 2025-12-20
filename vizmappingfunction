@@ -1,0 +1,29 @@
+def generate_visual_instruction_prompt(result):
+    """
+    Translates the RSIP engine results into a descriptive prompt for DALL-E 3.
+    """
+    food = result['food']
+    safety = result['safety_zone']
+    
+    # We define the visual 'rules' for the AI based on the safety zone
+    if safety == "Low":
+        portion_description = "a small, fist-sized portion"
+        color_tone = "bright, healthy, and vibrant"
+    elif safety == "Medium":
+        portion_description = "a medium portion (about half the bowl)"
+        color_tone = "natural and clear"
+    else:
+        portion_description = "a very small, caution-sized portion"
+        color_tone = "stark and instructional"
+
+    prompt = f"""
+    A high-quality, instructional photo for a medical nutrition plan in a rural African village setting. 
+    The image shows a traditional clay bowl on a wooden table. 
+    Inside the bowl, the food is arranged using the 'Plate Method' for diabetes:
+    - On one side: {portion_description} of {food}.
+    - On the other side: A large, overflowing pile of local leafy green vegetables and beans.
+    - Style: Realistic, clear lighting, no text. 
+    - Purpose: To show a person with limited literacy exactly how to portion their {food} to stay safe.
+    - Atmosphere: {color_tone} and encouraging.
+    """
+    return prompt
