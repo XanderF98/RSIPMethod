@@ -1,0 +1,5 @@
+Generate a text description of a "Visual Plate" for {region}. Use local foods:
+- Staple: {staple}, prep: {prep_method}
+- Pairings: {pairings}
+Describe the bowl as thirds or halves, using local utensil references (calabash, ladle).
+Be specific: quantities in handfuls, ladle scoops, or flat palm measures.
