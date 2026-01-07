@@ -1,0 +1,8 @@
+{
+  "region": "Benue, Nigeria",
+  "staple": "cassava fufu",
+  "prep_method": "boil_cool_24h_reheat",
+  "pairings": ["okra stew", "bitter leaf"],
+  "constraints": { "refrigeration": false, "budget": "low" },
+  "language": "English (simplified)"
+}
